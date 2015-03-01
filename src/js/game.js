@@ -8,7 +8,7 @@
 
     Game.prototype = {
 
-		INIT_SPRITES: 1+parseInt(Math.random()*4),
+		INIT_SPRITES: 10+parseInt(Math.random()*40),
 
         create: function() {
             var x = this.game.width / 2,
