@@ -8,7 +8,7 @@
 
     Game.prototype = {
 
-		INIT_SPRITES: 10+parseInt(Math.random()*40),
+		INIT_SPRITES: 10+parseInt(Math.random()*10),
 
         create: function() {
             var x = this.game.width / 2,
@@ -19,20 +19,24 @@
 			for(var i=0; i<this.INIT_SPRITES; ++i) {
 				this.sprites.push(this.randomSprite());
 			}
+
         },
+		enableDebug: function() {
+			
+		},
 
 		generateScale: function() {
 			return Math.random() + 0.1;
 		},
 
-		generateAngle: function() {
-			var x = Math.random()*this.game.width,
-				y = Math.random()*this.game.height;
-			return Math.atan2(this.centerPoint.x-x, this.centerPoint.y-y) * (180/Math.PI);
+		randomAngle: function(sprite) {
+			var x = sprite.width/2+Math.random()*(this.game.width-sprite.width),
+				y = sprite.width/2+Math.random()*(this.game.height-sprite.height);
+			var angle = this.math.angleBetween(this.centerPoint.x, this.centerPoint.y, x, y);
+			sprite.angle = angle*(180/Math.PI);
 		},
 
 		randomPostion: function(sprite) {
-			sprite.anchor.setTo(0,0);
 			var x = this.game.width-sprite.width,
 				y = this.game.height-sprite.height;
 			sprite.reset(Math.random()*x, Math.random()*y);
@@ -40,6 +44,7 @@
 
 		randomSprite: function() {
 			var sprite = this.add.sprite(0, 0, 'player');
+			sprite.anchor.setTo(0.5, 0.5);
 			sprite.inputEnabled = true;
 			sprite.events.onInputUp.add(this.spriteInputUp, this);
 			sprite.events.onKilled.add(this.spriteKilled, this);
@@ -47,8 +52,7 @@
 			var scale = this.generateScale();
 			sprite.scale.set(scale, scale);
 
-			sprite.anchor.setTo(0.5, 0.5);
-			sprite.angle = this.generateAngle();
+			this.randomAngle(sprite);
 
 			this.randomPostion(sprite);
 			
@@ -70,18 +74,13 @@
 			}
         },
 
-		spriteKilled: function(sprite) {
-			console.dir(sprite);
-			var p = sprite.world;
-			console.dir(p);
-			
+		spriteKilled: function() {
 			var txt = this.game.add.bitmapText(this.centerPoint.x, this.centerPoint.y, 'minecraftia', '+5');
 			txt.fontSize = 32;
 			txt.fill = '#ffffff';
 			txt.font = 'minecraftia';
 			txt.align = 'center';
 			this.game.add.tween(txt).to({fontSize: 64, alpha: 0}, 1000).start();
-			console.dir(txt);
 		},
 		
         update: function() {},
