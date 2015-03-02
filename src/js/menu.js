@@ -2,6 +2,8 @@
     'use strict';
 
     function Menu() {
+		this.ns = window['hello-phaser'] || {};
+
         this.titleTxt = null;
         this.startTxt = null;
     }
@@ -12,6 +14,10 @@
             var x = this.game.width / 2,
                 y = this.game.height / 2;
 
+			if(!this.ns.bgm) {
+				this.ns.bgm = this.add.audio('bgm', 0.6, true);
+				this.ns.bgm.play('', 0, 0.6, true);
+			}
 
             this.titleTxt = this.add.bitmapText(x, y, 'minecraftia', 'DOME GAME', 22);
             this.titleTxt.align = 'center';

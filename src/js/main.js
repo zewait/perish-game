@@ -2,6 +2,7 @@ window.onload = function() {
     'use strict';
 
     var game, ns = window['hello-phaser'];
+	ns.score = 0;
 
     game = new Phaser.Game('100', '100', Phaser.AUTO, 'hello-phaser-game');
     game.state.add('boot', ns.Boot);

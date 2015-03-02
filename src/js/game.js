@@ -2,24 +2,43 @@
 	'use strict';
 
     function Game() {
+		this.ns = window['hello-phaser'] || {};
+		this.ns.score = 0;
+		this.ns.win = false;
+		this.beginSecond = 0;
+
 		this.sprites = [];
+		this.timerLabel = null;
+		this.sorceLabel = null;
+		this.effectsSounds = null;
+
 		this.centerPoint = {x:0, y:0};
     }
 
     Game.prototype = {
 
 		INIT_SPRITES: 10+parseInt(Math.random()*10),
+		
+		// game total time(second)
+		TOTAL_TIME: 30,
 
         create: function() {
+			this.beginSecond = this.time.totalElapsedSeconds();
             var x = this.game.width / 2,
                 y = this.game.height / 2;
 			var centerPoint = {x:x, y:y};
 			this.centerPoint = centerPoint;
-
+			
 			for(var i=0; i<this.INIT_SPRITES; ++i) {
 				this.sprites.push(this.randomSprite());
 			}
 
+			this.timerLabel = this.add.bitmapText(this.game.width-65, 0, 'minecraftia', this.TOTAL_TIME+'s', 22);
+			this.sorceLabel = this.add.bitmapText(0, 0, 'minecraftia', 'score: '+this.ns.score, 22);
+			
+
+			this.effectsSounds = this.add.audio('effect_sounds');
+			this.effectsSounds.addMarker('ping', 10, 1.0);
         },
 		enableDebug: function() {
 			
@@ -70,20 +89,31 @@
 			}
 			console.log('sprites: ', this.sprites.length);
 			if(this.sprites.length <= 0) {
+				this.ns.win = true;
 				this.game.state.start('end');
 			}
         },
 
 		spriteKilled: function() {
-			var txt = this.game.add.bitmapText(this.centerPoint.x, this.centerPoint.y, 'minecraftia', '+5');
-			txt.fontSize = 32;
-			txt.fill = '#ffffff';
-			txt.font = 'minecraftia';
-			txt.align = 'center';
-			this.game.add.tween(txt).to({fontSize: 64, alpha: 0}, 1000).start();
+			this.effectsSounds.play('ping');
+			this.ns.score += 5;
+			console.log(this.ns.score);
+			var effectLabel = this.game.add.bitmapText(this.centerPoint.x, this.centerPoint.y, 'minecraftia', '+' + 5, 32);
+			effectLabel.x = this.centerPoint.x - effectLabel.width/2;
+			this.game.add.tween(effectLabel).to({fontSize: 64, alpha: 0}, 1000).start();
 		},
 		
         update: function() {},
+		
+		render: function() {
+			this.sorceLabel.text = 'score: ' + this.ns.score;
+			var elapsedSeconds = this.time.totalElapsedSeconds() - this.beginSecond;
+			var remainSecondes = this.TOTAL_TIME-elapsedSeconds;
+			if(remainSecondes <= 0) {
+				this.game.state.start('end');
+			}
+			this.timerLabel.text = (parseInt(remainSecondes))+'s';
+		},
 
        // update: function() {
        //     var x, y, cx, cy, dx, dy, angle, scale;
