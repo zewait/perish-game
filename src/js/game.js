@@ -9,7 +9,7 @@
 
         this.sprites = [];
         this.timerLabel = null;
-        this.sorceLabel = null;
+        this.scoreLabel = null;
         this.effectsSounds = null;
 
         this.centerPoint = {
@@ -32,7 +32,6 @@
 
             this.sprites = [];
 
-            console.log('create');
             this.beginSecond = this.time.totalElapsedSeconds();
             var x = this.game.width / 2,
                 y = this.game.height / 2;
@@ -47,7 +46,7 @@
             }
 
             this.timerLabel = this.add.bitmapText(this.game.width - 65, 0, 'minecraftia', this.TOTAL_TIME + 's', 22);
-            this.sorceLabel = this.add.bitmapText(0, 0, 'minecraftia', 'score: ' + this.ns.score, 22);
+            this.scoreLabel = this.add.bitmapText(0, 0, 'minecraftia', 'score: ' + this.ns.score, 22);
 
 
             this.effectsSounds = this.add.audio('effect_sounds');
@@ -111,10 +110,10 @@
             this.effectsSounds.play('ping');
             this.ns.score += 5;
             console.log(this.ns.score);
-            var effectLabel = this.game.add.bitmapText(this.centerPoint.x, this.centerPoint.y, 'minecraftia', '+' + 5, 32);
-            effectLabel.x = this.centerPoint.x - effectLabel.width / 2;
+            var effectLabel = this.game.add.bitmapText(this.scoreLabel.x+this.scoreLabel.width-10, this.scoreLabel.y, 'minecraftia', '+5', 22);
+			console.dir(effectLabel);
             this.game.add.tween(effectLabel).to({
-                fontSize: 64,
+                fontSize: 48,
                 alpha: 0
             }, 1000).start();
         },
@@ -122,7 +121,7 @@
         update: function() {},
 
         render: function() {
-            this.sorceLabel.text = 'score: ' + this.ns.score;
+            this.scoreLabel.text = 'score: ' + this.ns.score;
             var elapsedSeconds = this.time.totalElapsedSeconds() - this.beginSecond;
             var remainSecondes = this.TOTAL_TIME - elapsedSeconds;
             if (remainSecondes <= 0) {
