@@ -5,6 +5,7 @@
         this.asset = null;
         this.ready = false;
     }
+	
 
     Preloader.prototype = {
 

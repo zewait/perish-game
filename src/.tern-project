@@ -1,0 +1,5 @@
+{
+	"loadEagerly": [
+		 "bower_components/phaser-official/build/phaser.min.js"
+	]
+}

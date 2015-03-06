@@ -12,12 +12,14 @@
         this.scoreLabel = null;
         this.effectsSounds = null;
 
+		
         this.centerPoint = {
             x: 0,
             y: 0
         };
-    }
 
+    }
+	
     Game.prototype = {
 
         INIT_SPRITES: 10 + parseInt(Math.random() * 10),
@@ -29,7 +31,6 @@
             this.ns.score = 0;
             this.ns.win = false;
             this.beginSecond = 0;
-
             this.sprites = [];
 
             this.beginSecond = this.time.totalElapsedSeconds();
@@ -110,8 +111,8 @@
             this.effectsSounds.play('ping');
             this.ns.score += 5;
             console.log(this.ns.score);
-            var effectLabel = this.game.add.bitmapText(this.scoreLabel.x+this.scoreLabel.width-10, this.scoreLabel.y, 'minecraftia', '+5', 22);
-			console.dir(effectLabel);
+            var effectLabel = this.game.add.bitmapText(this.scoreLabel.x + this.scoreLabel.width - 10, this.scoreLabel.y, 'minecraftia', '+5', 22);
+            console.dir(effectLabel);
             this.game.add.tween(effectLabel).to({
                 fontSize: 48,
                 alpha: 0
@@ -129,7 +130,6 @@
             }
             this.timerLabel.text = (parseInt(remainSecondes)) + 's';
         },
-
         // update: function() {
         //     var x, y, cx, cy, dx, dy, angle, scale;
 
@@ -154,8 +154,6 @@
         }
 
     };
-
     window['hello-phaser'] = window['hello-phaser'] || {};
     window['hello-phaser'].Game = Game;
-
 }());
