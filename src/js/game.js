@@ -17,13 +17,12 @@
             x: 0,
             y: 0
         };
-
     }
 	
     Game.prototype = {
 
         INIT_SPRITES: 10 + parseInt(Math.random() * 10),
-
+		
         // game total time(second)
         TOTAL_TIME: 30,
 
@@ -32,15 +31,6 @@
             this.ns.win = false;
             this.beginSecond = 0;
             this.sprites = [];
-
-            this.beginSecond = this.time.totalElapsedSeconds();
-            var x = this.game.width / 2,
-                y = this.game.height / 2;
-            var centerPoint = {
-                x: x,
-                y: y
-            };
-            this.centerPoint = centerPoint;
 
             for (var i = 0; i < this.INIT_SPRITES; ++i) {
                 this.sprites.push(this.randomSprite());
