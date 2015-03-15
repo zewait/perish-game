@@ -38,7 +38,7 @@
             this.stage.setBackgroundColor('#c1ebf9');
             if (!this.ns.bgm) {
                 this.ns.bgm = this.add.audio('bgm', 0.6, true);
-                //this.ns.bgm.play('', 0, 0.6, true);
+                this.ns.bgm.play('', 0, 0.6, true);
             }
 
 
