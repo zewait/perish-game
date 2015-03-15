@@ -3,11 +3,7 @@
 
     function Game() {
         this.ns = window['hello-phaser'] || {};
-        this.ns.score = 0;
-        this.ns.win = false;
-        this.beginSecond = 0;
 
-        this.sprites = [];
         this.timerLabel = null;
         this.scoreLabel = null;
         this.effectsSounds = null;
@@ -16,38 +12,50 @@
             x: 0,
             y: 0
         };
+
     }
-	
+
     Game.prototype = {
 
-        INIT_SPRITES: 10 + parseInt(Math.random() * 10),
-		
+        TOTAL_FRUIT: 4,
+        // scroll down 4 pixel per second speed
+        SCROLL_Y_PER_SECOND: 4,
         // game total time(second)
         TOTAL_TIME: 30,
+		SCORE_PER: 10,
 
         create: function() {
+			this.ns.score = 0;
+            this.scrollHeight = this.world.height * 3;
+            this.initSpriteNum = this.rnd.integerInRange(30, 50);
             this.ns.score = 0;
-            this.ns.win = false;
-            this.beginSecond = 0;
-            this.sprites = [];
+            this.beginSecond = this.time.totalElapsedSeconds();
+            this.sprites = this.add.group();
+            this.sprites.enableBody = true;
+            this.effects = this.add.group();
 
-            for (var i = 0; i < this.INIT_SPRITES; ++i) {
-                this.sprites.push(this.randomSprite());
+            for (var i = 0; i < this.initSpriteNum; ++i) {
+                this.randomSprite();
             }
 
             this.timerLabel = this.add.bitmapText(this.game.width - 65, 0, 'minecraftia', this.TOTAL_TIME + 's', 22);
-            this.scoreLabel = this.add.bitmapText(0, 0, 'minecraftia', 'score: ' + this.ns.score, 22);
+            this.scoreLabel = this.add.bitmapText(15, 0, 'minecraftia', 'score: ' + this.ns.score, 22);
 
 
             this.effectsSounds = this.add.audio('effect_sounds');
             this.effectsSounds.addMarker('ping', 10, 1.0);
+
+            this.add.tween(this.sprites).to({
+                y: -this.scrollHeight + this.world.height
+            }, this.TOTAL_TIME * 1000, Phaser.Easing.Linear.None, true);
+
         },
         enableDebug: function() {
 
         },
 
         generateScale: function() {
-            return Math.random() + 0.1;
+            return this.rnd.integerInRange(8, 15) / 10;
         },
 
         randomAngle: function(sprite) {
@@ -57,55 +65,52 @@
             sprite.angle = angle * (180 / Math.PI);
         },
 
-        randomPostion: function(sprite) {
-            var x = this.game.width - sprite.width,
-                y = this.game.height - sprite.height;
-            sprite.reset(Math.random() * x, Math.random() * y);
-        },
-
         randomSprite: function() {
-            var sprite = this.add.sprite(0, 0, 'player');
-            sprite.anchor.setTo(0.5, 0.5);
+            var sprite = null;
+            if (this.rnd.between(0, 100) > 95) {
+                sprite = this.sprites.create(this.rnd.integerInRange(0, this.game.width), this.rnd.integerInRange(this.world.height/2, this.scrollHeight), 'assemble', 'bomb.png');
+                sprite.tag = 'bomb';
+            } else {
+                sprite = this.sprites.create(this.rnd.integerInRange(0, this.game.width), this.rnd.integerInRange(this.world.height/2, this.scrollHeight), 'assemble', 'fruit_0' + this.rnd.integerInRange(0, this.TOTAL_FRUIT - 1) + '.png');
+                sprite.tag = 'fruit';
+            }
+            sprite.body.immovale = true;
             sprite.inputEnabled = true;
             sprite.events.onInputUp.add(this.spriteInputUp, this);
             sprite.events.onKilled.add(this.spriteKilled, this);
 
             var scale = this.generateScale();
-            sprite.scale.set(scale, scale);
+            sprite.scale.set(scale);
 
             this.randomAngle(sprite);
-
-            this.randomPostion(sprite);
-
 
             return sprite;
         },
 
         spriteInputUp: function(sprite) {
             sprite.kill();
-            for (var i = 0; i < this.sprites.length; i++) {
-                if (!this.sprites[i].alive) {
-                    this.sprites.splice(i, 1);
-                    break;
-                }
-            }
-            console.log('sprites: ', this.sprites.length);
-            if (this.sprites.length <= 0) {
-                this.ns.win = true;
-                this.game.state.start('end');
+        },
+
+        spriteKilled: function(sprite) {
+			var flag = 'bomb'==sprite.tag ? -1:1;
+            this.effectsSounds.play('ping');
+            this.ns.score += this.SCORE_PER*flag;
+            var effectLabel = this.game.add.bitmapText(this.scoreLabel.x + this.scoreLabel.width - 10, this.scoreLabel.y, 'minecraftia', (-1===flag?'-':'+')+this.SCORE_PER, 22, this.effects);
+            this.game.add.tween(effectLabel).to({
+                fontSize: 48,
+                alpha: 0,
+                alive: false
+            }, 1000).start().onComplete.addOnce(this.onEffectLabelOnComplete, this);
+
+
+            var deaded = null;
+            while ((deaded = this.sprites.getFirstDead())) {
+                this.sprites.removeChild(deaded);
             }
         },
 
-        spriteKilled: function() {
-            this.effectsSounds.play('ping');
-            this.ns.score += 5;
-            console.log(this.ns.score);
-            var effectLabel = this.game.add.bitmapText(this.scoreLabel.x + this.scoreLabel.width - 10, this.scoreLabel.y, 'minecraftia', '+5', 22);
-            console.dir(effectLabel);
-            this.game.add.tween(effectLabel).to({
-                fontSize: 48,
-                alpha: 0
-            }, 1000).start();
+        onEffectLabelOnComplete: function(sprite) {
+            this.effects.removeChild(sprite);
         },
 
         update: function() {},
@@ -115,9 +120,10 @@
             var elapsedSeconds = this.time.totalElapsedSeconds() - this.beginSecond;
             var remainSecondes = this.TOTAL_TIME - elapsedSeconds;
             if (remainSecondes <= 0) {
-                this.game.state.start('end');
+                this.game.state.start('menu');
             }
             this.timerLabel.text = (parseInt(remainSecondes)) + 's';
+            //this.sprites.y -= this.SCROLL_Y_PER_SECOND*1.4*(elapsedSeconds/this.TOTAL_TIME);
         },
 
         onInputDown: function() {

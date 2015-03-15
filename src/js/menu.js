@@ -41,6 +41,8 @@
                 //this.ns.bgm.play('', 0, 0.6, true);
             }
 
+
+
             // --- btn begin ----
             this.btnStart = this.add.button(this.world.centerX,
                 this.world.centerY + 20,
@@ -62,7 +64,11 @@
             // --- btn end -----
 
             this.initLeaderboard();
+
+            this.initCoupon();
+
         },
+
 
         /**
          * enable btnLeaderboard and btnStart
@@ -71,6 +77,33 @@
             var flag = enable ? 2 : -1;
             this.btnLeaderboard.input.priorityID = flag;
             this.btnStart.input.priorityID = flag;
+        },
+
+        initCoupon: function() {
+
+            if (undefined !== this.ns.score) {
+                this.sound = this.add.audio('happy');
+                this.sound.play();
+
+                var scoreLabel = this.game.add.bitmapText(this.world.centerX, 50, 'minecraftia', 'score: ' + this.ns.score, 22, this.effects);
+                scoreLabel.x -= scoreLabel.width / 2;
+                if (this.ns.score >= 300) {
+                    var coupon = this.add.sprite(this.world.centerX, 0, 'assemble', 'coupon.jpg');
+                    coupon.anchor.set(0.5);
+
+                    coupon.inputEnabled = true;
+                    coupon.input.priorityID = 3;
+                    coupon.events.onInputUp.add(function(sprite) {
+                        this.add.tween(coupon).to({
+                            y: -sprite.height / 2
+                        }, 2000, Phaser.Easing.Bounce.In, true);
+                    }, this);
+
+                    this.add.tween(coupon).to({
+                        y: this.world.height / 2
+                    }, 2000, Phaser.Easing.Bounce.Out, true);
+                }
+            }
         },
 
         initLeaderboard: function() {
@@ -92,15 +125,15 @@
             mask.endFill();
             this.dialogLeaderboardContent.mask = mask;
 
-			// enable physics
+            // enable physics
             this.game.physics.arcade.enable(this.dialogLeaderboardContent);
             this.dialogLeaderboardContent.body.velocity.y = 0;
-			this.dialogLeaderboardContent.body.drag.set(100);
-			this.dialogLeaderboardContent.body.maxVelocity.set(200);
-			//this.dialogLeaderboardContent.body.allowRotation = false;
-			//this.dialogLeaderboardContent.body.rotation = 90;
+            this.dialogLeaderboardContent.body.drag.set(100);
+            this.dialogLeaderboardContent.body.maxVelocity.set(200);
+            //this.dialogLeaderboardContent.body.allowRotation = false;
+            //this.dialogLeaderboardContent.body.rotation = 90;
 
-			// set drag
+            // set drag
             this.dialogLeaderboardContent.inputEnabled = true;
             this.dialogLeaderboardContent.input.allowHorizontalDrag = false;
             this.dialogLeaderboardContent.input.enableDrag(false, false, false, 255, new Phaser.Rectangle(this.dialogLeaderboardContent.x, this.dialogLeaderboardContent.y - this.dialogLeaderboardContent.height + this.dialogLeaderboard.height - 20, this.dialogLeaderboardContent.width, this.dialogLeaderboardContent.height * 2 - this.dialogLeaderboard.height + 20));
@@ -124,8 +157,8 @@
             this.dialogLeaderboard.addChild(this.btnClose);
             this.setupLeaderboardContent();
 
-            //this.dialogLeaderboard.scale.set(0);
-            this.enableGameBtn();
+            this.dialogLeaderboard.scale.set(0);
+            this.enableGameBtn(true);
             // --- leaderboard begin -----
 
 
@@ -150,15 +183,21 @@
                 for (var i = 0; i < this.leaderboards.length; i++, offsetHight += itemHeight) {
                     var leader = this.leaderboards[i];
                     var avatar = this.make.sprite(0, 0, leader.avatar);
-					avatar.scale.set(60/avatar.height);
+                    avatar.scale.set(60 / avatar.height);
                     tempBd.draw(avatar, 0, offsetHight);
 
-					var name = this.make.text(0,0,(i+1)+'.'+leader.nick_name, {font:'18px Arial', align:'left'});
-					tempBd.draw(name, avatar.width+10, offsetHight+10);
+                    var name = this.make.text(0, 0, (i + 1) + '.' + leader.nick_name, {
+                        font: '18px Arial',
+                        align: 'left'
+                    });
+                    tempBd.draw(name, avatar.width + 10, offsetHight + 10);
 
-					
-					var score = this.make.text(0,0,leader.score,{font:'16px Arial', align:'left'});
-					tempBd.draw(score, avatar.width+10, offsetHight+40);
+
+                    var score = this.make.text(0, 0, leader.score, {
+                        font: '16px Arial',
+                        align: 'left'
+                    });
+                    tempBd.draw(score, avatar.width + 10, offsetHight + 40);
                 }
             }
 
@@ -171,28 +210,36 @@
 
 
         onLeaderboardDragStart: function(sprite) {
-			sprite.draging = true;
-			sprite.body.velocity.setTo(0);
+            sprite.draging = true;
+            sprite.body.velocity.setTo(0);
         },
 
-		onLeaderboardDragMove: function(point) {
-			if(this.lastDragPoint && this.lastDragPoint.time+500>this.time.now) {
-				return;
-			}
-			this.lastDragPoint = {x:point.x, y:point.y, time:this.time.now};
-		},
+        onLeaderboardDragMove: function(point) {
+            if (this.lastDragPoint && this.lastDragPoint.time + 500 > this.time.now) {
+                return;
+            }
+            this.lastDragPoint = {
+                x: point.x,
+                y: point.y,
+                time: this.time.now
+            };
+        },
 
         onLeaderboardDragStop: function(sprite, point) {
-			sprite.draging = false;
-			this.lastDragStopPoint = {x:this.input.position.x, y:this.input.position.y, time:this.time.now};
-			//alert(this.lastDragPoint.y);
-			//alert(this.lastDragStopPoint.y);
-			console.dir(this.input.pointer1);
-			//var distanceTime = point.timeUp - point.timeDown;
-			//console.log('distanceTime: ', distanceTime);
-			//if(distanceTime<500) {
-				//sprite.body.velocity.setTo(0, -150);
-			//}
+            sprite.draging = false;
+            this.lastDragStopPoint = {
+                x: this.input.position.x,
+                y: this.input.position.y,
+                time: this.time.now
+            };
+            //alert(this.lastDragPoint.y);
+            //alert(this.lastDragStopPoint.y);
+            console.dir(this.input.pointer1);
+            //var distanceTime = point.timeUp - point.timeDown;
+            //console.log('distanceTime: ', distanceTime);
+            //if(distanceTime<500) {
+            //sprite.body.velocity.setTo(0, -150);
+            //}
         },
 
         onLeaderboardClose: function() {
@@ -223,11 +270,11 @@
             //console.log('start');
         },
 
-		update: function() {
-			if(this.dialogLeaderboardContent.draging) {
-				this.onLeaderboardDragMove(this.input.position);
-			}
-		}
+        update: function() {
+            if (this.dialogLeaderboardContent && this.dialogLeaderboardContent.draging) {
+                this.onLeaderboardDragMove(this.input.position);
+            }
+        }
 
     };
 

@@ -195,6 +195,12 @@
             <filename>dialog_leaderboard.png</filename>
             <filename>btn_close_00.png</filename>
             <filename>btn_close_01.png</filename>
+            <filename>fruit_00.png</filename>
+            <filename>fruit_01.png</filename>
+            <filename>fruit_02.png</filename>
+            <filename>fruit_03.png</filename>
+            <filename>bomb.png</filename>
+            <filename>coupon.jpg</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

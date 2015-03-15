@@ -4,7 +4,10 @@
   - State "HANGUP"     from "DOING"      [2015-03-14 Sat 21:44]
   - State "DOING"      from "TODO"       [2015-03-14 Sat 15:10]
 * TODO add sky background and dynamic cloud [state:menu]
-* TODO pop leaderboard view [state:menu]
-* TODO roll background to perish goods [state:play]
-* TODO if score highter than 300 show(jump out effect) the coupon, else show the score[state:end]
+* DONE pop leaderboard view [state:menu]
+  - State "DONE"       from "TODO"       [2015-03-16 Mon 03:00]
+* DONE roll background to perish goods [state:play]
+  - State "DONE"       from "TODO"       [2015-03-16 Mon 03:00]
+* DONE if score highter than 300 show(jump out effect) the coupon, else show the score[state:end]
+  - State "DONE"       from "TODO"       [2015-03-16 Mon 03:01]
 

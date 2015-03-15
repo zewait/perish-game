@@ -2,7 +2,6 @@ window.onload = function() {
     'use strict';
 
     var game, ns = window['hello-phaser'];
-	ns.score = 0;
 	ns.url = {
 		leaderboard: 'assets/demo/data/leaderboard.json'
 	};
