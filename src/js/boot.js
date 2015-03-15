@@ -1,35 +1,39 @@
-(function () {
-  'use strict';
+(function() {
+    'use strict';
 
-  function Boot() {}
+    function Boot() {}
 
-  Boot.prototype = {
-    
-    preload: function () {
-      this.load.image('preloader', 'assets/preloader.gif');
-    },
+    Boot.prototype = {
 
-    create: function () {
-      this.game.input.maxPointers = 1;
+        preload: function() {
+            this.load.image('preloader', 'assets/preloader.gif');
+        },
 
-      if (this.game.device.desktop) {
-        this.game.scale.pageAlignHorizontally = true;
-      } else {
-        this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        this.game.scale.minWidth =  320;
-        this.game.scale.minHeight = 480;
-        this.game.scale.maxWidth = 640;
-        this.game.scale.maxHeight = 480;
-        this.game.scale.forceOrientation(true);
-        this.game.scale.pageAlignHorizontally = true;
-        this.game.scale.setScreenSize(true);
-      }
-      this.game.state.start('preloader');
-    }
-  };
+        create: function() {
+            this.game.input.maxPointers = 1;
+			this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-  window['hello-phaser'] = window['hello-phaser'] || {};
-  window['hello-phaser'].Boot = Boot;
+            if (this.game.device.desktop) {
+                this.game.scale.pageAlignHorizontally = true;
+            } else {
+                this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+				if(this.world.height < 480) {
+					this.game.scale.setGameSize(320, 480);
+				}
+                this.game.scale.minWidth = 320;
+                this.game.scale.minHeight = 372;
+                this.game.scale.maxWidth = 800;
+                this.game.scale.maxHeight = 1024;
+                this.game.scale.forceOrientation(true);
+                this.game.scale.pageAlignHorizontally = true;
+                this.game.scale.setScreenSize(true);
+				console.log('aspectRatio', this.scale.aspectRatio);
+            }
+            this.game.state.start('preloader');
+        }
+    };
+
+    window['hello-phaser'] = window['hello-phaser'] || {};
+    window['hello-phaser'].Boot = Boot;
 
 }());
-

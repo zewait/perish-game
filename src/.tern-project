@@ -1,8 +1,9 @@
 {
 	"libs": [
-		"brower"
+		"browser"
 		],
 	"loadEagerly": [
-		"**/*.js"
+		"bower_components/phaser-official/src/**/*.js",
+		"js/**/*.js"
 	]
 }

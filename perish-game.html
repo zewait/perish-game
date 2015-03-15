@@ -1,0 +1,84 @@
+<h1>perish-game</h1>
+<h3>1.变量说明</h3>
+<pre><code class="lang-sh"><span class="comment">// 基准url（既请求链接的url域名前缀）。</span>
+base_url=http:<span class="comment">//example.com</span>
+<span class="comment">// 字符串数数据类型</span>
+<span class="keyword">string</span>
+<span class="comment">// 整型</span>
+<span class="keyword">int</span></code></pre>
+<h3>2.传输结构说明</h3>
+<p>采用<strong>json</strong>来返回数据，返回数据采用如下结构
+</p>
+<pre><code class="lang-json">{
+    // 消息代码，0代表请求并服务器处理成功，其余代码服务器自定义
+    &quot;code&quot;: 0,
+    // 服务器处理完成后的消息（如：用户不存在，请求数据非法等等）
+    &quot;msg&quot;: &quot;成功&quot;,
+    // 服务器处理请求后返回的数据。可以是字典、数组、结构体、字符串、数字等等
+    // 无数据可以返回null或者忽略该字段
+    &quot;data&quot;: {}
+}</code></pre>
+<h3>3.api</h3>
+<h4>3.1获取本微信用户资料</h4>
+<blockquote>
+<p><strong>explain</strong>: 获取当前游戏用户的微信资料（可协商修改）<br><strong>url</strong>: <a href="http://example.com/user/get.json" title="获取本微信用户资料">base_url/user/get.json</a><br><strong>response data</strong>:
+</p>
+<pre><code class="lang-json">{
+    &quot;code&quot;: 0,
+    &quot;msg&quot;: &quot;成功&quot;
+    &quot;data&quot;:
+    {
+        // 微信openid    
+        &quot;openid&quot;: &quot;12345678&quot;,
+        // 微信用户昵称
+        &quot;nick_name&quot;: &quot;{Wait}&quot;
+        // 头像
+        &quot;avatar&quot;: &quot;http://example.com/user/{wait}/avatar.png&quot;
+        // 最高分数
+        &quot;best_score&quot;: 90
+    }
+}</code></pre>
+</blockquote>
+<h4>3.2上传分数</h4>
+<blockquote>
+<p><strong>explain</strong>: 上传分数；服务器<em>保存用户最高得分</em>，进行<em>排行处理</em>，并判断该得分是否超过<em>指定分数点</em>（该分数点待定，预先定义成450），超过返回<em>优惠卷</em>信息并与用户进行关联，否则data返回null（或者忽略处理）<br><strong>url</strong>: <a href="http://example.com/socre/submit.json?openid=12345678&amp;score=99" title="上传分数">base_url/score/submit.json</a><br><strong>params</strong>:
+openuid(微信openid):string、score(用户得分):int<br><strong>response data</strong>:
+</p>
+<pre><code class="lang-json">{
+    &quot;code&quot;: 0,
+    &quot;msg&quot;: &quot;成功&quot;,
+    &quot;data&quot;:
+    {
+        // 优惠卷名称
+        &quot;name&quot;: &quot;优衣库100块抵用劵&quot;,
+        // 优惠卷图片
+        &quot;img&quot;: &quot;http://example.com/assets/uyk.png&quot;
+    }
+}</code></pre>
+</blockquote>
+<h4>3.3获取排行榜</h4>
+<blockquote>
+<p><strong>explain</strong>: 获取前n位的分数，按降序排列<br><strong>url</strong>: <a href="http://example.com/leaderboard/list.json?top=10" title="获取排行榜">base_url/leaderboard/list.json</a><br><strong>params</strong>: top（排行榜前n位用户）:int<br><strong>response data</strong>:
+</p>
+<pre><code class="lang-json">{
+    &quot;code&quot;: 0,
+    &quot;msg&quot;: &quot;成功&quot;,
+    &quot;data&quot;:
+    // 数组，降序排列
+    [
+        {
+            &quot;nick_name&quot;: &quot;张三&quot;,
+            // 头像
+            &quot;avatar&quot;: &quot;http://example.com/user/zhangshan/avatar.png&quot;
+            &quot;score&quot;: 500
+        },
+        {
+            &quot;nick_name&quot;: &quot;李四&quot;,
+            // 头像
+            &quot;avatar&quot;: &quot;http://example.com/user/lixi/avatar.png&quot;
+            &quot;score&quot;: 450
+        }
+        ....
+    ]
+}</code></pre>
+</blockquote>

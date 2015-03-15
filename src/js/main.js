@@ -3,7 +3,11 @@ window.onload = function() {
 
     var game, ns = window['hello-phaser'];
 	ns.score = 0;
+	ns.url = {
+		leaderboard: '/demo/data/leaderboard.json'
+	};
 
+    //game = new Phaser.Game(320, 480, Phaser.AUTO, 'hello-phaser-game');
     game = new Phaser.Game('100', '100', Phaser.AUTO, 'hello-phaser-game');
     game.state.add('boot', ns.Boot);
     game.state.add('preloader', ns.Preloader);

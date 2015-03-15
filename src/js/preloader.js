@@ -2,6 +2,7 @@
     'use strict';
 
     function Preloader() {
+        this.ns = window['hello-phaser'] || {};
         this.asset = null;
         this.ready = false;
     }
@@ -19,11 +20,15 @@
         },
 
         loadResources: function() {
+			this.load.json('leaderboard.json', this.ns.url.leaderboard, true);
             this.load.image('player', 'assets/player.png');
+			this.load.atlas('assemble', 'assets/assemble.png', 'assets/assemble.json');
+
             this.load.bitmapFont('minecraftia', 'assets/minecraftia.png', 'assets/minecraftia.xml');
 			this.load.audio('bgm', ['assets/bgm.mp3', 'assets/bgm.ogg']);
 			this.load.audio('effect_sounds', ['assets/fx_mixdown.mp3', 'assets/fx_mixdown.ogg']);
 			this.load.audio('happy', ['assets/happy.mp3', 'assets/happy.ogg']);
+
         },
 
         create: function() {

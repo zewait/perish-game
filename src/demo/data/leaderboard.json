@@ -1,0 +1,115 @@
+{
+	"code": 0,
+	"msg": "成功",
+	"data": [
+		{
+			"nick_name": "阿强",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强2",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强3",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强4",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强5",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强6",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强7",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+{
+			"nick_name": "阿强",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强2",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强3",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强4",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强5",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强6",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强7",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},{
+			"nick_name": "阿强",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强2",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强3",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强4",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强5",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强6",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},
+		{
+			"nick_name": "阿强7",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		},{
+			"nick_name": "阿强",
+			"avatar": "/demo/data/avatar/00.jpg",
+			"score": 1000
+		}
+
+	]
+}

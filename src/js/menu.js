@@ -2,7 +2,7 @@
     'use strict';
 
     function Menu() {
-		this.ns = window['hello-phaser'] || {};
+        this.ns = window['hello-phaser'] || {};
 
         this.titleTxt = null;
         this.startTxt = null;
@@ -10,42 +10,225 @@
 
     Menu.prototype = {
 
+        preload: function() {
+            this.load.json('leaderboard.json', this.ns.url.leaderboard, true);
+
+            var data = this.cache.getJSON('leaderboard.json');
+            if (0 === data.code) {
+                // data success
+                // player rank array
+                this.leaderboards = data.data;
+                if (!this.leaderboards) {
+                    return;
+                }
+                for (var i = 0; i < this.leaderboards.length; i++) {
+                    var l = this.leaderboards[i];
+                    this.load.image(l.avatar, l.avatar);
+                }
+            } else {
+                // data error
+                alert(data.msg);
+            }
+
+
+        },
+
         create: function() {
-            var x = this.game.width / 2,
-                y = this.game.height / 2;
 
-			if(!this.ns.bgm) {
-				this.ns.bgm = this.add.audio('bgm', 0.6, true);
-				this.ns.bgm.play('', 0, 0.6, true);
+            this.stage.setBackgroundColor('#c1ebf9');
+            if (!this.ns.bgm) {
+                this.ns.bgm = this.add.audio('bgm', 0.6, true);
+                //this.ns.bgm.play('', 0, 0.6, true);
+            }
+
+            // --- btn begin ----
+            this.btnStart = this.add.button(this.world.centerX,
+                this.world.centerY + 20,
+                'assemble', this.onStart, this,
+                'btn_start_00.png',
+                'btn_start_00.png',
+                'btn_start_01.png',
+                'btn_start_00.png');
+            this.btnStart.anchor.set(0.5);
+
+            this.btnLeaderboard = this.add.button(this.btnStart.position.x,
+                this.btnStart.position.y + this.btnStart.height + 10,
+                'assemble', this.onLeaderboardOpen, this,
+                'btn_leaderboard_00.png',
+                'btn_leaderboard_00.png',
+                'btn_leaderboard_01.png',
+                'btn_leaderboard_00.png');
+            this.btnLeaderboard.anchor.set(0.5);
+            // --- btn end -----
+
+            this.initLeaderboard();
+        },
+
+        /**
+         * enable btnLeaderboard and btnStart
+         */
+        enableGameBtn: function(enable) {
+            var flag = enable ? 2 : -1;
+            this.btnLeaderboard.input.priorityID = flag;
+            this.btnStart.input.priorityID = flag;
+        },
+
+        initLeaderboard: function() {
+            // --- leaderboard begin -----
+            this.dialogLeaderboard = this.add.sprite(this.world.centerX, this.world.centerY, 'assemble', 'dialog_leaderboard.png');
+            this.dialogLeaderboard.anchor.set(0.5);
+            this.dialogLeaderboard.alpha = 0.9;
+
+            // temp bitmap data
+            this.bmd = this.make.bitmapData(this.dialogLeaderboard.width - 22, this.dialogLeaderboard.height);
+
+            // leaderboard container
+            this.dialogLeaderboardContent = this.make.sprite(-this.dialogLeaderboard.width / 2 + 10, -this.dialogLeaderboard.height / 2 + 10, this.bmd);
+            // mask
+            var mask = this.add.graphics(0, 0);
+            // set mask
+            mask.beginFill();
+            mask.drawRect(this.dialogLeaderboard.x - this.dialogLeaderboardContent.width / 2, this.dialogLeaderboard.y - this.dialogLeaderboard.height / 2 + 10, this.dialogLeaderboardContent.width, this.dialogLeaderboard.height - 20);
+            mask.endFill();
+            this.dialogLeaderboardContent.mask = mask;
+
+			// enable physics
+            this.game.physics.arcade.enable(this.dialogLeaderboardContent);
+            this.dialogLeaderboardContent.body.velocity.y = 0;
+			this.dialogLeaderboardContent.body.drag.set(100);
+			this.dialogLeaderboardContent.body.maxVelocity.set(200);
+			//this.dialogLeaderboardContent.body.allowRotation = false;
+			//this.dialogLeaderboardContent.body.rotation = 90;
+
+			// set drag
+            this.dialogLeaderboardContent.inputEnabled = true;
+            this.dialogLeaderboardContent.input.allowHorizontalDrag = false;
+            this.dialogLeaderboardContent.input.enableDrag(false, false, false, 255, new Phaser.Rectangle(this.dialogLeaderboardContent.x, this.dialogLeaderboardContent.y - this.dialogLeaderboardContent.height + this.dialogLeaderboard.height - 20, this.dialogLeaderboardContent.width, this.dialogLeaderboardContent.height * 2 - this.dialogLeaderboard.height + 20));
+            this.dialogLeaderboardContent.input.enableDrag();
+            this.dialogLeaderboardContent.events.onDragStart.add(this.onLeaderboardDragStart, this);
+            this.dialogLeaderboardContent.events.onDragStop.add(this.onLeaderboardDragStop, this);
+
+            this.dialogLeaderboard.addChild(this.dialogLeaderboardContent);
+
+            this.btnClose = this.make.button(this.dialogLeaderboard.width / 2 - 5, -(this.dialogLeaderboard.height / 2 - 5),
+                'assemble', this.onLeaderboardClose, this,
+                'btn_close_00.png',
+                'btn_close_00.png',
+                'btn_close_01.png',
+                'btn_close_00.png');
+            this.btnClose.anchor.set(0.5);
+            this.btnClose.input.priorityID = 1;
+            this.btnClose.useHandCursor = true;
+
+
+            this.dialogLeaderboard.addChild(this.btnClose);
+            this.setupLeaderboardContent();
+
+            //this.dialogLeaderboard.scale.set(0);
+            this.enableGameBtn();
+            // --- leaderboard begin -----
+
+
+        },
+
+        setupLeaderboardContent: function() {
+            var itemHeight = 100;
+
+            // set height
+            var hight = this.dialogLeaderboard.height;
+            if (this.leaderboards) {
+                var tempHight = itemHeight * this.leaderboards.length;
+                if (tempHight > hight) {
+                    (hight = tempHight);
+                }
+            }
+            var tempBd = this.make.bitmapData(this.dialogLeaderboardContent.width, hight);
+            tempBd.rect(0, 0, tempBd.width, tempBd.height, '#ffffff');
+            // set rank
+            if (this.leaderboards) {
+                var offsetHight = 20;
+                for (var i = 0; i < this.leaderboards.length; i++, offsetHight += itemHeight) {
+                    var leader = this.leaderboards[i];
+                    var avatar = this.make.sprite(0, 0, leader.avatar);
+					avatar.scale.set(60/avatar.height);
+                    tempBd.draw(avatar, 0, offsetHight);
+
+					var name = this.make.text(0,0,(i+1)+'.'+leader.nick_name, {font:'18px Arial', align:'left'});
+					tempBd.draw(name, avatar.width+10, offsetHight+10);
+
+					
+					var score = this.make.text(0,0,leader.score,{font:'16px Arial', align:'left'});
+					tempBd.draw(score, avatar.width+10, offsetHight+40);
+                }
+            }
+
+            this.dialogLeaderboardContent.loadTexture(tempBd);
+
+
+            // set drag area
+            this.dialogLeaderboardContent.input.enableDrag(false, false, false, 255, new Phaser.Rectangle(this.dialogLeaderboardContent.x, this.dialogLeaderboardContent.y - this.dialogLeaderboardContent.height + this.dialogLeaderboard.height - 20, this.dialogLeaderboardContent.width, this.dialogLeaderboardContent.height * 2 - this.dialogLeaderboard.height + 20));
+        },
+
+
+        onLeaderboardDragStart: function(sprite) {
+			sprite.draging = true;
+			sprite.body.velocity.setTo(0);
+        },
+
+		onLeaderboardDragMove: function(point) {
+			if(this.lastDragPoint && this.lastDragPoint.time+500>this.time.now) {
+				return;
 			}
+			this.lastDragPoint = {x:point.x, y:point.y, time:this.time.now};
+		},
 
-            this.titleTxt = this.add.bitmapText(x, y, 'minecraftia', 'DOME GAME', 22);
-            this.titleTxt.align = 'center';
-            this.titleTxt.x = this.game.width / 2 - this.titleTxt.textWidth / 2;
-
-            y = y + this.titleTxt.height + 5;
-			this.createBy = this.add.bitmapText(x, y, 'minecraftia', 'BY {WAIT}', 20);
-			this.createBy.align = 'center';
-            this.createBy.x = this.game.width / 2 - this.createBy.textWidth / 2;
-			
-			
-			y += this.createBy.height+5;
-            this.startTxt = this.add.bitmapText(x, y, 'minecraftia', 'START', 22);
-            this.startTxt.align = 'center';
-            this.startTxt.x = this.game.width / 2 - this.startTxt.textWidth / 2;
-
-            this.input.onDown.add(this.onDown, this);
-			
-			this.add.button(x, y);
+        onLeaderboardDragStop: function(sprite, point) {
+			sprite.draging = false;
+			this.lastDragStopPoint = {x:this.input.position.x, y:this.input.position.y, time:this.time.now};
+			//alert(this.lastDragPoint.y);
+			//alert(this.lastDragStopPoint.y);
+			console.dir(this.input.pointer1);
+			//var distanceTime = point.timeUp - point.timeDown;
+			//console.log('distanceTime: ', distanceTime);
+			//if(distanceTime<500) {
+				//sprite.body.velocity.setTo(0, -150);
+			//}
         },
 
-        update: function() {
-
+        onLeaderboardClose: function() {
+            if (this.dialogLeaderboard.tween && this.dialogLeaderboard.tween.isRunning || 0 === this.dialogLeaderboard.scale.x) {
+                return;
+            }
+            this.dialogLeaderboard.tween = this.add.tween(this.dialogLeaderboard.scale).to({
+                x: 0,
+                y: 0
+            }, 500, Phaser.Easing.Elastic.In, true);
+            this.enableGameBtn(true);
         },
 
-        onDown: function() {
+        onLeaderboardOpen: function() {
+            if (this.dialogLeaderboard.tween && this.dialogLeaderboard.tween.isRunning || 1 === this.dialogLeaderboard.scale.x) {
+                return;
+            }
+            this.dialogLeaderboard.tween = this.add.tween(this.dialogLeaderboard.scale).to({
+                x: 1,
+                y: 1
+            }, 1000, Phaser.Easing.Elastic.Out, true);
+
+            this.enableGameBtn();
+        },
+
+        onStart: function() {
             this.game.state.start('game');
-        }
+            //console.log('start');
+        },
+
+		update: function() {
+			if(this.dialogLeaderboardContent.draging) {
+				this.onLeaderboardDragMove(this.input.position);
+			}
+		}
+
     };
 
     window['hello-phaser'] = window['hello-phaser'] || {};
