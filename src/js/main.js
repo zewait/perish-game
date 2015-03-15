@@ -4,7 +4,7 @@ window.onload = function() {
     var game, ns = window['hello-phaser'];
 	ns.score = 0;
 	ns.url = {
-		leaderboard: 'demo/data/leaderboard.json'
+		leaderboard: 'assets/demo/data/leaderboard.json'
 	};
 
     //game = new Phaser.Game(320, 480, Phaser.AUTO, 'hello-phaser-game');
