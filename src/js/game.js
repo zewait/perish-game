@@ -59,10 +59,7 @@
         },
 
         randomAngle: function(sprite) {
-            var x = sprite.width / 2 + Math.random() * (this.game.width - sprite.width),
-                y = sprite.width / 2 + Math.random() * (this.game.height - sprite.height);
-            var angle = this.math.angleBetween(this.centerPoint.x, this.centerPoint.y, x, y);
-            sprite.angle = angle * (180 / Math.PI);
+            sprite.angle = this.rnd.angle();
         },
 
         randomSprite: function() {
