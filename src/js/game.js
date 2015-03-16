@@ -30,6 +30,7 @@
             this.initSpriteNum = this.rnd.integerInRange(30, 50);
             this.ns.score = 0;
             this.beginSecond = this.time.totalElapsedSeconds();
+			
             this.sprites = this.add.group();
 			this.bombs = this.add.group();
             this.effects = this.add.group();
@@ -65,16 +66,19 @@
         randomSprite: function() {
             var sprite = null;
             if (this.rnd.between(0, 100) > 95) {
-                sprite = this.bombs.create(this.rnd.integerInRange(0, this.game.width), this.rnd.integerInRange(0, this.scrollHeight), 'assemble', 'bomb.png');
+                sprite = this.bombs.create(this.rnd.integerInRange(20, this.game.width-20), this.rnd.integerInRange(20, this.scrollHeight-20), 'assemble', 'bomb.png');
                 sprite.tag = 'bomb';
             } else {
-                sprite = this.sprites.create(this.rnd.integerInRange(0, this.game.width-50), this.rnd.integerInRange(0, this.scrollHeight-50), 'assemble', 'fruit_0' + this.rnd.integerInRange(0, this.TOTAL_FRUIT - 1) + '.png');
+                sprite = this.sprites.create(this.rnd.integerInRange(20, this.game.width-20), this.rnd.integerInRange(20, this.scrollHeight-20), 'assemble', 'fruit_0' + this.rnd.integerInRange(0, this.TOTAL_FRUIT - 1) + '.png');
                 sprite.tag = 'fruit';
             }
+
+			sprite.anchor.set(0.5);
             sprite.inputEnabled = true;
             sprite.events.onInputUp.add(this.spriteInputUp, this);
             sprite.events.onKilled.add(this.spriteKilled, this);
 
+			console.dir(sprite.anchor);
             var scale = this.generateScale();
             sprite.scale.set(scale);
 
