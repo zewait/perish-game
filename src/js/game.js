@@ -26,12 +26,12 @@
 
         create: function() {
 			this.ns.score = 0;
-            this.scrollHeight = this.world.height * 3;
+            this.scrollHeight = this.world.height;
             this.initSpriteNum = this.rnd.integerInRange(30, 50);
             this.ns.score = 0;
             this.beginSecond = this.time.totalElapsedSeconds();
             this.sprites = this.add.group();
-            this.sprites.enableBody = true;
+			this.bombs = this.add.group();
             this.effects = this.add.group();
 
             for (var i = 0; i < this.initSpriteNum; ++i) {
@@ -45,9 +45,9 @@
             this.effectsSounds = this.add.audio('effect_sounds');
             this.effectsSounds.addMarker('ping', 10, 1.0);
 
-            this.add.tween(this.sprites).to({
-                y: -this.scrollHeight + this.world.height
-            }, this.TOTAL_TIME * 1000, Phaser.Easing.Linear.None, true);
+            //this.add.tween(this.sprites).to({
+            //    y: -this.scrollHeight + this.world.height
+            //}, this.TOTAL_TIME * 1000, Phaser.Easing.Linear.None, true);
 
         },
         enableDebug: function() {
@@ -68,13 +68,12 @@
         randomSprite: function() {
             var sprite = null;
             if (this.rnd.between(0, 100) > 95) {
-                sprite = this.sprites.create(this.rnd.integerInRange(0, this.game.width), this.rnd.integerInRange(this.world.height/2, this.scrollHeight), 'assemble', 'bomb.png');
+                sprite = this.bombs.create(this.rnd.integerInRange(0, this.game.width), this.rnd.integerInRange(0, this.scrollHeight), 'assemble', 'bomb.png');
                 sprite.tag = 'bomb';
             } else {
-                sprite = this.sprites.create(this.rnd.integerInRange(0, this.game.width), this.rnd.integerInRange(this.world.height/2, this.scrollHeight), 'assemble', 'fruit_0' + this.rnd.integerInRange(0, this.TOTAL_FRUIT - 1) + '.png');
+                sprite = this.sprites.create(this.rnd.integerInRange(0, this.game.width-50), this.rnd.integerInRange(0, this.scrollHeight-50), 'assemble', 'fruit_0' + this.rnd.integerInRange(0, this.TOTAL_FRUIT - 1) + '.png');
                 sprite.tag = 'fruit';
             }
-            sprite.body.immovale = true;
             sprite.inputEnabled = true;
             sprite.events.onInputUp.add(this.spriteInputUp, this);
             sprite.events.onKilled.add(this.spriteKilled, this);
@@ -102,7 +101,6 @@
                 alive: false
             }, 1000).start().onComplete.addOnce(this.onEffectLabelOnComplete, this);
 
-
             var deaded = null;
             while ((deaded = this.sprites.getFirstDead())) {
                 this.sprites.removeChild(deaded);
@@ -119,17 +117,12 @@
             this.scoreLabel.text = 'score: ' + this.ns.score;
             var elapsedSeconds = this.time.totalElapsedSeconds() - this.beginSecond;
             var remainSecondes = this.TOTAL_TIME - elapsedSeconds;
-            if (remainSecondes <= 0) {
+			console.log(this.sprites.length);
+            if (remainSecondes <= 0 || !this.sprites.length) {
                 this.game.state.start('menu');
             }
             this.timerLabel.text = (parseInt(remainSecondes)) + 's';
-            //this.sprites.y -= this.SCROLL_Y_PER_SECOND*1.4*(elapsedSeconds/this.TOTAL_TIME);
-        },
-
-        onInputDown: function() {
-            this.game.state.start('menu');
         }
-
     };
     window['hello-phaser'] = window['hello-phaser'] || {};
     window['hello-phaser'].Game = Game;

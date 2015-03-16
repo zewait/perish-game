@@ -225,7 +225,7 @@
             };
         },
 
-        onLeaderboardDragStop: function(sprite, point) {
+        onLeaderboardDragStop: function(sprite) {
             sprite.draging = false;
             this.lastDragStopPoint = {
                 x: this.input.position.x,
