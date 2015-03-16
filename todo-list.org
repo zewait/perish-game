@@ -11,3 +11,6 @@
 * DONE if score highter than 300 show(jump out effect) the coupon, else show the score[state:end]
   - State "DONE"       from "TODO"       [2015-03-16 Mon 03:01]
 
+* DONE add new game state(game2.js) to change fruit to cat
+  - State "DONE"       from "DOING"      [2015-03-16 Mon 21:55]
+  - State "DOING"      from "TODO"       [2015-03-16 Mon 19:41]

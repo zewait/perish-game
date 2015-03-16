@@ -12,6 +12,7 @@ window.onload = function() {
     game.state.add('preloader', ns.Preloader);
     game.state.add('menu', ns.Menu);
     game.state.add('game', ns.Game);
+    game.state.add('game2', ns.Game2);
     game.state.add('end', ns.End);
     /* yo phaser:state new-state-files-put-here */
 

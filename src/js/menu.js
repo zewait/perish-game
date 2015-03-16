@@ -38,14 +38,14 @@
             this.stage.setBackgroundColor('#c1ebf9');
             if (!this.ns.bgm) {
                 this.ns.bgm = this.add.audio('bgm', 0.6, true);
-                this.ns.bgm.play('', 0, 0.6, true);
+                //this.ns.bgm.play('', 0, 0.6, true);
             }
 
 
 
             // --- btn begin ----
             this.btnStart = this.add.button(this.world.centerX,
-                this.world.centerY + 20,
+                this.world.centerY-40,
                 'assemble', this.onStart, this,
                 'btn_start_00.png',
                 'btn_start_00.png',
@@ -53,8 +53,17 @@
                 'btn_start_00.png');
             this.btnStart.anchor.set(0.5);
 
-            this.btnLeaderboard = this.add.button(this.btnStart.position.x,
-                this.btnStart.position.y + this.btnStart.height + 10,
+            this.btnStart2 = this.add.button(this.world.centerX,
+                this.world.centerY + 20,
+                'assemble', this.onStart2, this,
+                'btn_start_2_00.png',
+                'btn_start_2_00.png',
+                'btn_start_2_01.png',
+                'btn_start_2_00.png');
+            this.btnStart2.anchor.set(0.5);
+
+            this.btnLeaderboard = this.add.button(this.btnStart2.position.x,
+                this.btnStart2.position.y + this.btnStart.height + 10,
                 'assemble', this.onLeaderboardOpen, this,
                 'btn_leaderboard_00.png',
                 'btn_leaderboard_00.png',
@@ -77,6 +86,7 @@
             var flag = enable ? 2 : -1;
             this.btnLeaderboard.input.priorityID = flag;
             this.btnStart.input.priorityID = flag;
+            this.btnStart2.input.priorityID = flag;
         },
 
         initCoupon: function() {
@@ -267,7 +277,10 @@
 
         onStart: function() {
             this.game.state.start('game');
-            //console.log('start');
+        },
+
+        onStart2: function() {
+            this.game.state.start('game2');
         },
 
         update: function() {
