@@ -38,9 +38,14 @@
             this.stage.setBackgroundColor('#c1ebf9');
             if (!this.ns.bgm) {
                 this.ns.bgm = this.add.audio('bgm', 0.6, true);
-                this.ns.bgm.play('', 0, 0.6, true);
+				// TODO toggle it
+                //this.ns.bgm.play('', 0, 0.6, true);
             }
 
+
+			// titile
+			this.title = this.add.image(this.world.centerX, 60, 'assemble', 'txt_title.png');
+			this.title.anchor.set(0.5);
 
 
             // --- btn begin ----
@@ -95,7 +100,7 @@
                 this.sound = this.add.audio('happy');
                 this.sound.play();
 
-                var scoreLabel = this.game.add.bitmapText(this.world.centerX, 50, 'minecraftia', 'score: ' + this.ns.score, 22, this.effects);
+                var scoreLabel = this.game.add.bitmapText(this.world.centerX, 90, 'minecraftia', 'score: ' + this.ns.score, 22, this.effects);
                 scoreLabel.x -= scoreLabel.width / 2;
                 if (this.ns.score >= 300) {
                     var coupon = this.add.sprite(this.world.centerX, 0, 'assemble', 'coupon.jpg');

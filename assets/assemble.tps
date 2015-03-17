@@ -179,6 +179,7 @@
             <filename>coupon.jpg</filename>
             <filename>btn_start_2_00.png</filename>
             <filename>btn_start_2_01.png</filename>
+            <filename>txt_title.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

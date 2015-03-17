@@ -15,6 +15,7 @@
 
             if (this.game.device.desktop) {
                 this.game.scale.pageAlignHorizontally = true;
+				this.game.scale.setGameSize(320, 480);
             } else {
                 this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 				if(this.world.height < 480) {

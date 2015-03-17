@@ -7,6 +7,7 @@
         this.timerLabel = null;
         this.scoreLabel = null;
         this.effectsSounds = null;
+        this.level = 0;
 
         this.centerPoint = {
             x: 0,
@@ -19,33 +20,19 @@
 
         // game total time(second)
         TOTAL_TIME: 30,
-		SCORE_PER: 10,
+        SCORE_PER: 10,
 
         create: function() {
-			this.ns.score = 0;
+            this.ns.score = 0;
             this.scrollHeight = this.world.height;
-            this.initSpriteNum = this.rnd.integerInRange(30, 50);
             this.ns.score = 0;
             this.beginSecond = this.time.totalElapsedSeconds();
-			
+
             this.sprites = this.add.physicsGroup(Phaser.Physics.ARCADE);
-			this.bombs = this.add.group();
+            this.bombs = this.add.group();
             this.effects = this.add.group();
 
-            for (var i = 0; i < this.initSpriteNum; ++i) {
-				var s = this.sprites.create(this.rnd.between(100, this.world.width-100), this.rnd.between(100, this.world.height-100), 'giphy');
-				s.animations.add('walk');
-				s.animations.play('walk', 10, true);
-				s.body.velocity.set(this.rnd.between(-50,50), this.rnd.between(-50, 50));
-
-            }
-			this.sprites.setAll('body.collideWorldBounds', true);
-			this.sprites.setAll('body.bounce.x', 1);
-			this.sprites.setAll('body.bounce.y', 1);
-			this.sprites.setAll('inputEnabled', true);
-			this.sprites.callAll('scale.set', 'scale', 1.5);
-			this.sprites.callAll('events.onInputUp.add', 'events.onInputUp', this.spriteInputUp, this);
-			this.sprites.callAll('events.onKilled.add', 'events.onKilled', this.spriteKilled, this);
+            this.level1();
 
             this.timerLabel = this.add.bitmapText(this.game.width - 65, 0, 'minecraftia', this.TOTAL_TIME + 's', 22);
             this.scoreLabel = this.add.bitmapText(15, 0, 'minecraftia', 'score: ' + this.ns.score, 22);
@@ -56,52 +43,81 @@
 
 
         },
-        enableDebug: function() {
 
+        showLevel: function(level) {
+            var effectLabel = this.game.add.bitmapText(this.world.centerX, this.world.centerY, 'minecraftia', 'Level ' + level, 32, this.effects);
+            effectLabel.x -= effectLabel.width / 2;
+            effectLabel.y -= effectLabel.height / 2;
+            this.game.add.tween(effectLabel).to({
+                fontSize: 50,
+                alpha: 0,
+                alive: false,
+				x:(effectLabel.x - 10),
+				y:(effectLabel.y -10)
+            }, 1000, Phaser.Easing.Linear.None, true, 1000).onComplete.addOnce(this.onEffectLabelOnComplete, this);
         },
 
-        generateScale: function() {
-            return this.rnd.integerInRange(8, 15) / 10;
-        },
 
-        randomAngle: function(sprite) {
-            sprite.angle = this.rnd.angle();
-        },
 
-        randomSprite: function() {
-            var sprite = null;
-            if (this.rnd.between(0, 100) > 95) {
-                sprite = this.bombs.create(this.rnd.integerInRange(20, this.game.width-20), this.rnd.integerInRange(20, this.scrollHeight-20), 'assemble', 'bomb.png');
-                sprite.tag = 'bomb';
-            } else {
-                sprite = this.sprites.create(this.rnd.integerInRange(20, this.game.width-20), this.rnd.integerInRange(20, this.scrollHeight-20), 'assemble', 'fruit_0' + this.rnd.integerInRange(0, this.TOTAL_FRUIT - 1) + '.png');
-                sprite.tag = 'fruit';
+        level1: function() {
+            this.level = 1;
+            this.showLevel(this.level);
+            this.initSpriteNum = this.rnd.integerInRange(30, 50);
+
+            for (var i = 0; i < this.initSpriteNum; ++i) {
+				this.randSprite();
+
             }
 
-			sprite.anchor.set(0.5);
-            sprite.inputEnabled = true;
-            sprite.events.onInputUp.add(this.spriteInputUp, this);
-            sprite.events.onKilled.add(this.spriteKilled, this);
+            this.beginSecond = this.time.totalElapsedSeconds();
+        },
 
-			console.dir(sprite.anchor);
-            var scale = this.generateScale();
-            sprite.scale.set(scale);
 
-            this.randomAngle(sprite);
+        level2: function() {
+            this.level = 2;
+            this.showLevel(this.level);
+            this.initSpriteNum = this.rnd.integerInRange(30, 50);
 
-            return sprite;
+            for (var i = 0; i < this.initSpriteNum; ++i) {
+				this.randSprite();
+
+            }
+
+            this.beginSecond = this.time.totalElapsedSeconds();
+        },
+
+        randSprite: function() {
+            var s = null;
+
+            if (this.level === 2 && this.rnd.between(0, 100) > 60) {
+                s = this.sprites.create(this.rnd.between(100, this.world.width - 100), this.rnd.between(100, this.world.height - 100), 'nyan_cat_cool');
+            } else {
+                s = this.sprites.create(this.rnd.between(100, this.world.width - 100), this.rnd.between(100, this.world.height - 100), 'nyan_cat');
+            }
+            s.animations.add('walk');
+            s.animations.play('walk', 10, true);
+            s.body.velocity.set(this.rnd.between(-60, 60), this.rnd.between(-60, 60));
+
+			s.body.collideWorldBounds = true;
+			s.body.bounce.x = 1;
+			s.body.bounce.y = 1;
+			s.inputEnabled = true;
+			s.scale.set(0.2);
+			s.events.onInputUp.add(this.spriteInputUp, this);
+			s.events.onKilled.add(this.spriteKilled, this);
+
         },
 
         spriteInputUp: function(sprite) {
-			console.log('kill');
+            console.log('kill');
             sprite.kill();
         },
 
         spriteKilled: function(sprite) {
-			var flag = 'bomb'==sprite.tag ? -1:1;
+            var flag = 'nyan_cat_cool' === sprite.key ? -1 : 1;
             this.effectsSounds.play('ping');
-            this.ns.score += this.SCORE_PER*flag;
-            var effectLabel = this.game.add.bitmapText(this.scoreLabel.x + this.scoreLabel.width - 10, this.scoreLabel.y, 'minecraftia', (-1===flag?'-':'+')+this.SCORE_PER, 22, this.effects);
+            this.ns.score += this.SCORE_PER * flag;
+            var effectLabel = this.game.add.bitmapText(this.scoreLabel.x + this.scoreLabel.width - 10, this.scoreLabel.y, 'minecraftia', (-1 === flag ? '-' : '+') + this.SCORE_PER, 22, this.effects);
             this.game.add.tween(effectLabel).to({
                 fontSize: 48,
                 alpha: 0,
@@ -119,11 +135,17 @@
         },
 
         update: function() {
-			this.physics.arcade.collide(this.sprites);
-		},
+            this.physics.arcade.collide(this.sprites);
+			if(this.rnd.between(0,100) > 99) {
+				this.randSprite();
+			}
+        },
 
         render: function() {
             this.scoreLabel.text = 'score: ' + this.ns.score;
+            if (1 === this.level && this.ns.score >= 300) {
+                this.level2();
+            }
             var elapsedSeconds = this.time.totalElapsedSeconds() - this.beginSecond;
             var remainSecondes = this.TOTAL_TIME - elapsedSeconds;
             if (remainSecondes <= 0 || !this.sprites.length) {
