@@ -81,6 +81,15 @@
 
             this.initCoupon();
 
+			//for(var i=0; i<4; i++) {
+			//	for(var j=0; j<3;j++) {
+			//		var s = this.add.sprite((j)*55+10, (i)*40+10, 'nyan_cat_cool', i*3+j);
+			//		console.log(i*3+j);
+			//		s.scale.set(0.2);
+
+			//		
+			//	}
+			//}
         },
 
 

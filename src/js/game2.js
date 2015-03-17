@@ -76,11 +76,10 @@
         level2: function() {
             this.level = 2;
             this.showLevel(this.level);
-            this.initSpriteNum = this.rnd.integerInRange(30, 50);
+			var num = this.rnd.between(5, 20);
 
-            for (var i = 0; i < this.initSpriteNum; ++i) {
+            for (var i = 0; i < num; ++i) {
 				this.randSprite();
-
             }
 
             this.beginSecond = this.time.totalElapsedSeconds();
