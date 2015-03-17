@@ -19,10 +19,10 @@
     Game.prototype = {
 
         // game total time(second)
-        TOTAL_TIME: 30,
         SCORE_PER: 10,
 
         create: function() {
+			this.totalTime = 30;
             this.ns.score = 0;
             this.scrollHeight = this.world.height;
             this.ns.score = 0;
@@ -34,7 +34,7 @@
 
             this.level1();
 
-            this.timerLabel = this.add.bitmapText(this.game.width - 65, 0, 'minecraftia', this.TOTAL_TIME + 's', 22);
+            this.timerLabel = this.add.bitmapText(this.game.width - 65, 0, 'minecraftia', this.totalTime + 's', 22);
             this.scoreLabel = this.add.bitmapText(15, 0, 'minecraftia', 'score: ' + this.ns.score, 22);
 
 
@@ -82,6 +82,7 @@
 				this.randSprite();
             }
 
+			this.totalTime += 10;
             this.beginSecond = this.time.totalElapsedSeconds();
         },
 
@@ -146,7 +147,7 @@
                 this.level2();
             }
             var elapsedSeconds = this.time.totalElapsedSeconds() - this.beginSecond;
-            var remainSecondes = this.TOTAL_TIME - elapsedSeconds;
+            var remainSecondes = this.totalTime - elapsedSeconds;
             if (remainSecondes <= 0 || !this.sprites.length) {
                 this.game.state.start('menu');
             }

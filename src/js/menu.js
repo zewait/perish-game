@@ -39,7 +39,7 @@
             if (!this.ns.bgm) {
                 this.ns.bgm = this.add.audio('bgm', 0.6, true);
 				// TODO toggle it
-                this.ns.bgm.play('', 0, 0.6, true);
+                //this.ns.bgm.play('', 0, 0.6, true);
             }
 
 
@@ -62,7 +62,8 @@
                 this.world.centerY + 20,
                 'assemble', this.onStart2, this,
                 'btn_start_2_00.png',
-                'btn_start_2_00.png',
+                'btn_start_2_00.png'
+,
                 'btn_start_2_01.png',
                 'btn_start_2_00.png');
             this.btnStart2.anchor.set(0.5);
@@ -86,10 +87,12 @@
 			//		var s = this.add.sprite((j)*55+10, (i)*40+10, 'nyan_cat_cool', i*3+j);
 			//		console.log(i*3+j);
 			//		s.scale.set(0.2);
-
-			//		
 			//	}
 			//}
+			//var testS = this.add.sprite(200, 200, 'nyan_cat_cool');
+			//testS.scale.set(0.2);
+			//testS.animations.add('walk');
+			//testS.animations.play('walk', 10, true);
         },
 
 
