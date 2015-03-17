@@ -39,7 +39,7 @@
             if (!this.ns.bgm) {
                 this.ns.bgm = this.add.audio('bgm', 0.6, true);
 				// TODO toggle it
-                //this.ns.bgm.play('', 0, 0.6, true);
+                this.ns.bgm.play('', 0, 0.6, true);
             }
 
 
