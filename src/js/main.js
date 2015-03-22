@@ -5,6 +5,21 @@ window.onload = function() {
 	ns.url = {
 		leaderboard: 'assets/demo/data/leaderboard.json'
 	};
+	ns.setBg = function(state) {
+		var bg = state.add.image(state.world.centerX, state.world.centerY, 'bg');
+		bg.anchor.set(0.5);
+		bg.smoothed = false;
+		var scaleW = state.game.width/bg.width;
+		var scaleH = state.game.height/bg.height;
+		
+		console.log(bg.width, bg.height);
+		console.log(state.stage.width, state.stage.height);
+		console.log(state.world.width, state.world.height);
+		console.log(state.game.width, state.game.height);
+		var scale = scaleW>scaleH ? scaleW:scaleH;
+		console.log(scale);
+		bg.scale.set(scale);
+	};
 
     //game = new Phaser.Game(320, 480, Phaser.AUTO, 'hello-phaser-game');
     game = new Phaser.Game('100', '100', Phaser.AUTO, 'hello-phaser-game');

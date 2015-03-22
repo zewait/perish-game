@@ -1,0 +1,302 @@
+#+SETUPFILE: ~/.emacs.d/site-lisp/org-html-themes/setup/bigblow-pirilampo.setup
+#+TITLE: 2015年“得食乐Fun享”微信游戏实现方案
+#+LINK_HOME: http://blob.h4fan.com
+#+EMAIL: mailto:wait@h4fan.com
+
+* 概述
+** 项目最终期限
+   *2015年4月1号*
+   
+** 用语说明
+
+- *主办方* - 假日广场
+- *微信公众号* - *主办方* 的微信公众号服务提供商
+-
+ *游戏前端* - 本人
+ 
+   
+** 简介
+  基于微信公众平台的得分赢礼卷游戏。
+  - 活动期间 *每位* 用户 *每天* 有机会赢取 *一张* 随机礼卷（分数达 *320分* 以上）；
+  - 活动结束排名第一的将获得1000元现金卷，将有专人联系你（最终解析权归主办方）
+  - 礼卷使用方式:用微信二维码扫礼卷中得二维码查询该礼卷状态，
+    并点击使用按钮输入指令使用，详见[[coupon][礼卷模块]]
+  
+  游戏前端功能如下：
+  - 游戏主体逻辑（以点击消除物品来获取分值）
+  - 获取微信用户资料（头像,昵称等,详阅[[user_login][用户模块#登陆授权]]）
+  - 礼卷（只获取，在用户分数到达 *320* 分，随机出一个礼卷（每位用户每天一次），详阅[[user_score_submit][用户模块#上传分值]]）
+  - 查看游戏积分排行榜（前 *十* 位, 详阅[[user_ranking][用户模块#排行榜]]）
+	
+
+  公众号功能如下：
+  - 活动菜单（二级菜单，名为“得食乐Fun享”），
+    点击触发多图文消息（1.进入游戏，2.查看礼卷）
+  - 获取当前用户资料，在开始游戏时，通过页面赋值（详阅[[user_login][用户模块#用户登陆授权]]）
+  - 用户最高分值记录（用户一天只能刷新一次成绩，详阅[[user_score_submit][用户模块#上传积分]]）
+  - 用户排行榜（详阅[[user_ranking][用户模块#排行榜]])
+  - 查询礼卷状态并能使用（详阅[[coupon_state][礼卷模块#查询状态]]
+  - 礼卷录入（涉及到二维码生成，详阅[[coupon_add][礼卷模块#礼卷录入]]）
+	
+** 流程
+   
+#+BEGIN_SRC ditaa :file imgs/flowchart.png :cmdline -s 0.8
+
+                     +------------+      OAuth2.0    
+  +--------+         |            | push user data to +---------------+
+  |  cBLU  |         |    cBLU    |    the php page   |      c707     |
+  | HNYSJY +-------->+ enter game +------------------>+ game php page |
+  |        |         |    menu    |                   |               |
+  +---+----+         |            |                   +-------+-------+
+      |              +------------+                           |
+      |                                                       |
+      v                                                       |
+  +---+-------+                                       +-------+-------+
+  | cBLU      |                                       |               |
+  |user coupon|                                       |               |
+  |   menu    |                                       v               v
+  +-----+-----+                                 +-----+-----+    +----+----+
+        ^                                       |    c707   |    |   c707  |
+        |                                       | play game |    | ranking |
+        |                                       |           |    |         |
+        | obtain                                +-----+-----+    +----+----+
+        |  user                                       ^               ^
+        | coupon                                      |               |
+        |                            upload score     |               |
+        |                                 &           |               |
+        |            +---------+     obtain coupo?    |               |
+        |            |  {s}    +<---------------------+               |
+        +----------->+  c1AB   |                                      |
+                     |  server |              request top 10          |
+                     |         +<-------------------------------------+
+                     |         |
+                     +---------+
+
+
+#+END_SRC
+说明
+| 描述   | 作用                       |
+|--------+----------------------------|
+| 蓝色   | 微信客户端（主办方公众号） |
+| 紫色   | 游戏前端                   |
+| 青色   | 公众号服务端               |
+| HNYSJY | 微信公众号                 |
+
+
+* 关于自定义json数据返回说明<<data_json>>
+** 阐述
+数据结构固有3个属性（ *code*, *msg*, *data* )
+| 属性 | 描述                                                                     |
+|------+--------------------------------------------------------------------------|
+| code | int类型，用户验证数据的正确性（0代表数据正确，其他都是非法数据，详阅[[data_json_code][code]] |
+| msg  | String类型，与code相对应的用户可读信息文本                               |
+| data | 任意数据类型，该请求返回的可用数据                                       |
+
+** code<<data_json_code>>
+| code | msg              |
+|------+------------------|
+|    0 | 成功             |
+|    1 | 非法用户         |
+|    2 | 请求数据类型错误 |
+
+* 用户模块<<user>>
+** 用户登陆授权<<user_login>>
+   
+*** 描述
+通过OAuth2.0获取换取到用户信息，服务器端渲染游戏页面perish-game.php，流程如下：
+1. 微信公众账号提供用户请求授权页面URL
+2. 用户点击授权页面URL，将向服务器发起请求
+3. 服务器询问用户是否同意授权给微信公众账号
+4. 服务器将code通过回调传给微信公众账号
+5. 微信公众账号通过code向服务器请求access__token
+6. 微信公众账号通过access_oken向服务器请求用户信息
+7. 利用用户信息渲染perish-game.php并返回给用户
+#+BEGIN_SRC html -n
+<script>
+
+window['ns'] = window['ns'] || {};
+wind
+ow['ns'].account = {
+	openid: <?php echo $data['openid']; ?>,
+	nickname: <?php echo $data['nickname']; ?>,
+	headerimgurl: <?php echo $data['headimgurl']; ?>
+};
+
+</script>
+#+END_SRC
+   
+** 上传分值<<user_score_submit>>
+*** 描述
+当游戏结束会触发上传游戏分值，微信公众号需要更新用户的最高分（一天只更新一次，以当天首次为准）；
+并且能根据分值情况（大于等于320）随机一张礼卷（用户一天一次获取礼卷机会）
+
+*** 请求
+/user/score/submit.json?openuid=8888&score=400
+| 参数   | 描述             |
+|--------+------------------|
+| openid | 微信账号openid   |
+| score  | 此次游戏获取分值 |
+
+*** 返回数据
+达到指定分值和尚未获取过礼卷的，返回礼卷信息，结构如下，否则忽略
+#+BEGIN_SRC -r
+{
+	"code": 0,
+	"msg": "成功",
+	"data": 
+	{
+		"desc": "优衣库100元优惠卷",
+		// 优惠卷二维码地址，如何生成详见[[coupon_qrcode_generate][礼卷模块#二维码生成]]
+		"qr_code_img_url": "http://example.com/qr_code/coupon.png"
+	}
+}
+#+END_SRC
+
+** 排行榜<<user_ranking>>
+*** 描述
+按用户游戏最高分值前十进行降序排序
+
+*** 请求
+/user/ranking.json
+
+*** 返回数据
+#+BEGIN_SRC javascript
+{
+	"code": 0,
+	"msg": "成功",
+	"data":
+	[
+		{
+			"nickname": "小一",
+			"score": 10000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		},
+		{
+			"nickname": "小二",
+			"score": 9000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		},
+		{
+			"nickname": "小三",
+			"score": 8000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		},
+		{
+			"nickname": "小四",
+			"score": 7000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		},
+		{
+			"nickname": "小五",
+			"score": 6000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		},
+		{
+			"nickname": "小六",
+			"score": 5000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		},
+		{
+			"nickname": "小七",
+			"score": 4000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		},
+		{
+			"nickname": "小八",
+			"score": 3000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		},
+		{
+			"nickname": "小九",
+			"score": 2000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		},
+		{
+			"nickname": "小十",
+			"score": 1000,
+			"headimgurl":"http://wx.qlogo.cn/mmopen/dfeewfas"
+		}
+	]
+}
+#+END_SRC
+
+* 礼卷模块<<coupon>>
+礼卷使用说明：
+- 通过微信二维码扫描礼卷的二维码跳转到网页查询礼卷当前状态（ *未使用* ｜ *已使用* ）；
+  若未使用，页面下方有 *使用按钮* ， *优惠卷发放商* 点击 *使用按钮* ，
+  输入约定好的 *指令* （假设是jiari）， *微信公众号* 验证指令，并标记该礼卷状态为 *已使用* 
+- 如何礼卷
+  ?能在 *微信公众号* 二级菜单“得食乐Fun享”->多图文消息->查看礼卷
+- 用户因非法操作导致礼卷无效， *主办方* 不对此承担任何责任
+  
+** 查询礼卷状态<<coupon_state>>
+*** 描述
+通过*扫码* 或者通过 *微信公众号* 二级菜单“得食乐Fun享”->多图文消息->查看礼卷，读取二维码中的url，跳转到网页
+
+*** url
+/coupon/state.php?id=1\\
+/coupon/state.php?openid=2131423
+| 参数   | 描述                           |
+|--------+--------------------------------|
+| id     | 礼卷id，查询单张礼卷           |
+| openid | 微信用户openid，查询用户得礼卷 |
+
+*** 视图
+ *最终实现视图可能与下面有区别，但总体结构能描述清楚即可*
+**** 未使用
+file:imgs/coupon_state.jpg
+**** 输入指令
+file:imgs/coupon_state_enter_code.jpg
+**** 已使用
+file:imgs/coupon_state_used.jpg
+	
+
+** 礼卷录入<<coupon_add>>
+
+*** 描述
+统一用代码导入礼卷，并根据礼卷id生成能访问[[coupon_state][礼卷状态]]的二维码，目前知道礼卷信息情况：
+- 礼卷提供商家
+- 优惠描述
+- 数目
+关于[[user_score_submit][用户模块#上传分值]]中返回优惠卷数据只有 *desc* 和 *qr__code__img__url* ，
+其中 *desc* 需要 *微信公众号* 拼装用户可读信息，如：优惠卷描述－礼卷提供商
+
+
+* *TODO*
+
+** 说明
+由于此项目牵涉到3方，
+为了有效开展项目，我例举下三方需要完成的工作
+（如有 *错漏* 或有什么 *不明白* 或需要 *更新TODO* 可以发我邮箱mailto:wait@h4fan.com 或者 加我企鹅773108248）
+ *望请大家估算下用时*
+
+
+** 主办方
+*** DOING 提供游戏素材（背景，精灵，游戏名，游戏图标）
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 13:17]
+*** DOING 礼卷信息
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 13:17]
+
+** 游戏前端
+游戏暂时地址:http://zewait.github.io/perish-game/
+*** DOING 替换游戏素材
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 12:54]
+*** DOING 与公众平台对接
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 12:54]
+	  
+
+** 微信公众号
+*** DOING 为游戏前端提供ftp
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 13:17]
+*** DOING 修改微信二级菜单
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 13:17]
+*** DOING [[user_login][用户模块#登陆授权]]
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 13:17]
+*** DOING [[user_score_submit][用户模块#上传分值]]
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 13:17]
+*** DOING [[user_ranking][用户模块#排行榜]]
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 13:17]
+*** DOING [[coupon_state][礼卷模块#查询礼卷状态]],此还包括确认使用礼卷的操作
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 13:17]
+*** DOING [[coupon_add][礼卷录入]]
+	- State "DOING"      from "TODO"       [2015-03-21 Sat 13:17]

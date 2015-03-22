@@ -22,6 +22,7 @@
         loadResources: function() {
 			this.load.json('leaderboard.json', this.ns.url.leaderboard, true);
 			//this.load.spritesheet('giphy', 'assets/giphy_4x1.png', 22, 33, 4);
+			this.load.image('bg', 'assets/bg.jpg');
 			this.load.spritesheet('nyan_cat', 'assets/nyan_cat_3x4.png', 272, 168);
 			this.load.spritesheet('nyan_cat_cool', 'assets/nyan_cat_cool_3x4.png', 258, 159);
 			this.load.atlas('assemble', 'assets/assemble.png', 'assets/assemble.json');

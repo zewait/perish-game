@@ -30,12 +30,23 @@
                 alert(data.msg);
             }
 
-
         },
+
+		generateCircleImg: function(key) {
+			var avatar = this.make.image(0,0,key);
+			avatar.scale.set(60 / avatar.height);
+			var mask = this.make.image(0, 0, 'assemble' ,'circle.png');
+
+			var bd = this.make.bitmapData(60, 60);
+			bd.alphaMask(avatar, mask);
+
+			return bd;
+		},
 
         create: function() {
 
-            this.stage.setBackgroundColor('#c1ebf9');
+			this.ns.setBg(this);
+            //this.stage.setBackgroundColor('#c1ebf9');
             if (!this.ns.bgm) {
                 this.ns.bgm = this.add.audio('bgm', 0.6, true);
 				// TODO toggle it
@@ -114,7 +125,7 @@
 
                 var scoreLabel = this.game.add.bitmapText(this.world.centerX, 90, 'minecraftia', 'score: ' + this.ns.score, 22, this.effects);
                 scoreLabel.x -= scoreLabel.width / 2;
-                if (this.ns.score >= 300) {
+                if (this.ns.score >= 320) {
                     var coupon = this.add.sprite(this.world.centerX, 0, 'assemble', 'coupon.jpg');
                     coupon.anchor.set(0.5);
 
@@ -209,8 +220,11 @@
                 var offsetHight = 20;
                 for (var i = 0; i < this.leaderboards.length; i++, offsetHight += itemHeight) {
                     var leader = this.leaderboards[i];
-                    var avatar = this.make.sprite(0, 0, leader.avatar);
-                    avatar.scale.set(60 / avatar.height);
+
+					//TODO
+                    var avatar =this.generateCircleImg(leader.avatar);
+				//	this.make.sprite(0, 0, leader.avatar);
+					
                     tempBd.draw(avatar, 0, offsetHight);
 
                     var name = this.make.text(0, 0, (i + 1) + '.' + leader.nick_name, {
@@ -259,14 +273,6 @@
                 y: this.input.position.y,
                 time: this.time.now
             };
-            //alert(this.lastDragPoint.y);
-            //alert(this.lastDragStopPoint.y);
-            console.dir(this.input.pointer1);
-            //var distanceTime = point.timeUp - point.timeDown;
-            //console.log('distanceTime: ', distanceTime);
-            //if(distanceTime<500) {
-            //sprite.body.velocity.setTo(0, -150);
-            //}
         },
 
         onLeaderboardClose: function() {

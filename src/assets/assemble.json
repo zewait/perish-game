@@ -2,7 +2,7 @@
 
 {
 	"filename": "bomb.png",
-	"frame": {"x":2,"y":340,"w":40,"h":55},
+	"frame": {"x":216,"y":270,"w":40,"h":55},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":55},
@@ -10,7 +10,7 @@
 },
 {
 	"filename": "btn_close_00.png",
-	"frame": {"x":542,"y":263,"w":36,"h":40},
+	"frame": {"x":154,"y":374,"w":36,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":40},
@@ -18,7 +18,7 @@
 },
 {
 	"filename": "btn_close_01.png",
-	"frame": {"x":542,"y":221,"w":36,"h":40},
+	"frame": {"x":154,"y":332,"w":36,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":36,"h":40},
@@ -26,7 +26,7 @@
 },
 {
 	"filename": "btn_leaderboard_00.png",
-	"frame": {"x":390,"y":368,"w":150,"h":47},
+	"frame": {"x":410,"y":340,"w":150,"h":47},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":150,"h":47},
@@ -34,7 +34,7 @@
 },
 {
 	"filename": "btn_leaderboard_01.png",
-	"frame": {"x":390,"y":319,"w":150,"h":47},
+	"frame": {"x":258,"y":340,"w":150,"h":47},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":150,"h":47},
@@ -42,7 +42,7 @@
 },
 {
 	"filename": "btn_start_00.png",
-	"frame": {"x":390,"y":270,"w":150,"h":47},
+	"frame": {"x":2,"y":368,"w":150,"h":47},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":150,"h":47},
@@ -50,7 +50,7 @@
 },
 {
 	"filename": "btn_start_01.png",
-	"frame": {"x":390,"y":221,"w":150,"h":47},
+	"frame": {"x":2,"y":319,"w":150,"h":47},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":150,"h":47},
@@ -58,7 +58,7 @@
 },
 {
 	"filename": "btn_start_2_00.png",
-	"frame": {"x":238,"y":340,"w":150,"h":47},
+	"frame": {"x":2,"y":270,"w":150,"h":47},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":150,"h":47},
@@ -66,15 +66,23 @@
 },
 {
 	"filename": "btn_start_2_01.png",
-	"frame": {"x":86,"y":340,"w":150,"h":47},
+	"frame": {"x":2,"y":177,"w":150,"h":47},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":150,"h":47},
 	"sourceSize": {"w":150,"h":47}
 },
 {
+	"filename": "circle.png",
+	"frame": {"x":154,"y":270,"w":60,"h":60},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":60,"h":60},
+	"sourceSize": {"w":60,"h":60}
+},
+{
 	"filename": "coupon.jpg",
-	"frame": {"x":280,"y":2,"w":300,"h":173},
+	"frame": {"x":2,"y":2,"w":300,"h":173},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":300,"h":173},
@@ -82,7 +90,7 @@
 },
 {
 	"filename": "dialog_leaderboard.png",
-	"frame": {"x":2,"y":2,"w":276,"h":336},
+	"frame": {"x":304,"y":2,"w":276,"h":336},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":276,"h":336},
@@ -90,7 +98,7 @@
 },
 {
 	"filename": "fruit_00.png",
-	"frame": {"x":322,"y":221,"w":40,"h":41},
+	"frame": {"x":196,"y":177,"w":40,"h":41},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":41},
@@ -98,7 +106,7 @@
 },
 {
 	"filename": "fruit_01.png",
-	"frame": {"x":44,"y":340,"w":40,"h":52},
+	"frame": {"x":216,"y":327,"w":40,"h":52},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":52},
@@ -106,7 +114,7 @@
 },
 {
 	"filename": "fruit_02.png",
-	"frame": {"x":280,"y":221,"w":40,"h":47},
+	"frame": {"x":154,"y":177,"w":40,"h":47},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":47},
@@ -114,7 +122,7 @@
 },
 {
 	"filename": "fruit_03.png",
-	"frame": {"x":322,"y":264,"w":40,"h":40},
+	"frame": {"x":238,"y":177,"w":40,"h":40},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":40,"h":40},
@@ -122,7 +130,7 @@
 },
 {
 	"filename": "txt_title.png",
-	"frame": {"x":280,"y":177,"w":282,"h":42},
+	"frame": {"x":2,"y":226,"w":282,"h":42},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":282,"h":42},
@@ -135,6 +143,6 @@
 	"format": "RGBA8888",
 	"size": {"w":582,"h":417},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:6a168a830d82a01f657adf1bd0003dac:1/1$"
+	"smartupdate": "$TexturePacker:SmartUpdate:f115e15c857f4f40b0cced05376613c0:1/1$"
 }
 }

@@ -19,9 +19,10 @@
     Game.prototype = {
 
         // game total time(second)
-        SCORE_PER: 10,
+        SCORE_PER: 3,
 
         create: function() {
+			this.ns.setBg(this);
 			this.totalTime = 30;
             this.ns.score = 0;
             this.scrollHeight = this.world.height;
@@ -76,14 +77,14 @@
         level2: function() {
             this.level = 2;
             this.showLevel(this.level);
-			var num = this.rnd.between(5, 20);
+			var num = this.rnd.between(10, 30);
 
             for (var i = 0; i < num; ++i) {
 				this.randSprite();
             }
 
 			this.totalTime += 10;
-            this.beginSecond = this.time.totalElapsedSeconds();
+            //this.beginSecond = this.time.totalElapsedSeconds();
         },
 
         randSprite: function() {
@@ -115,9 +116,11 @@
 
         spriteKilled: function(sprite) {
             var flag = 'nyan_cat_cool' === sprite.key ? -1 : 1;
+			var score = flag * this.SCORE_PER;
+			if(score<0) {score*=2;}
+            this.ns.score += score;
+            var effectLabel = this.game.add.bitmapText(this.scoreLabel.x + this.scoreLabel.width - 10, this.scoreLabel.y, 'minecraftia', (-1 === flag ? '-' : '+') + score, 22, this.effects);
             this.effectsSounds.play('ping');
-            this.ns.score += this.SCORE_PER * flag;
-            var effectLabel = this.game.add.bitmapText(this.scoreLabel.x + this.scoreLabel.width - 10, this.scoreLabel.y, 'minecraftia', (-1 === flag ? '-' : '+') + this.SCORE_PER, 22, this.effects);
             this.game.add.tween(effectLabel).to({
                 fontSize: 48,
                 alpha: 0,
@@ -136,19 +139,19 @@
 
         update: function() {
             this.physics.arcade.collide(this.sprites);
-			if(this.rnd.between(0,100) > 99) {
+			if(this.rnd.between(0,100) > 90 && this.sprites.length<=30) {
 				this.randSprite();
 			}
         },
 
         render: function() {
             this.scoreLabel.text = 'score: ' + this.ns.score;
-            if (1 === this.level && this.ns.score >= 300) {
+            if (1 === this.level && this.ns.score >= 250) {
                 this.level2();
             }
             var elapsedSeconds = this.time.totalElapsedSeconds() - this.beginSecond;
             var remainSecondes = this.totalTime - elapsedSeconds;
-            if (remainSecondes <= 0 || !this.sprites.length) {
+            if (remainSecondes <= 0) {
                 this.game.state.start('menu');
             }
             this.timerLabel.text = (parseInt(remainSecondes)) + 's';

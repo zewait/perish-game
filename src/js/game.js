@@ -78,7 +78,6 @@
             sprite.events.onInputUp.add(this.spriteInputUp, this);
             sprite.events.onKilled.add(this.spriteKilled, this);
 
-			console.dir(sprite.anchor);
             var scale = this.generateScale();
             sprite.scale.set(scale);
 
@@ -118,7 +117,6 @@
             this.scoreLabel.text = 'score: ' + this.ns.score;
             var elapsedSeconds = this.time.totalElapsedSeconds() - this.beginSecond;
             var remainSecondes = this.TOTAL_TIME - elapsedSeconds;
-			console.log(this.sprites.length);
             if (remainSecondes <= 0 || !this.sprites.length) {
                 this.game.state.start('menu');
             }
